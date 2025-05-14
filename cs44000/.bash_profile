@@ -1,0 +1,2 @@
+source .bashrc
+mesg n

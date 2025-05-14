@@ -1,0 +1,18 @@
+First crypto algorithm:
+  -Whitfield Diffie
+    -Diffie-Hellman method
+
+                            agree on:
+                            =========
+                            p = prime number
+                            g = generator
+
+    Alice                                         Bob
+    -------------------------------------------------
+    picks random a                              picks random b
+    computes g**a(mod p) ---------------------> receives g**a (** = exponent)
+                                                computes (g**a)**b mod p
+    receives g**b        <--------------------- computes g**b mod p
+    computes (g**b)**a = g**ab
+
+  -RSA

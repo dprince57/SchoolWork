@@ -1,0 +1,37 @@
+Wireless
+--------
+  electromagnetic radiation
+    light
+    xrays
+    radio waves
+    microwaves
+
+  photon
+  wave
+    frequency (# of oscillations per second)
+    wavelength
+      frequency * wavelength = speed of light
+      wf = c
+
+Three classes of methods for encoding data:
+-------------------------------------------
+  amplitude (changing the power of the signal)
+  frequency
+    one Hz = 1 cycle per second
+    2.415 GHz (wi-fi) = 2.415 billion cycles per second
+    2.415 GHz = channel 1
+      2.404 to 2.426 is the range of frequencies for (standard) wi-fi
+      how you exchange data changing frequncies
+  phase
+    4 out-of-phase signals pieced together for different values
+
+Encryption
+----------
+  WEP - Wired Equivalent Privacy (IEEE 802.11)
+    encryption algorithm called RC4
+      Rivest (R from RSA)
+      stream cipher
+    plaintext sequence of bytes
+    stream cipher generates random sequence of bytes
+      XOR bytes together from sequences together
+    key = shared key + Initialization Vector (IV) [24-bit rand #]

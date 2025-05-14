@@ -1,0 +1,24 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+  int i;
+  int k;
+  int j;  
+
+  int can[8][9];
+  int bCan[3][3];
+  int tCan[3][3];
+ 
+  for(i = 0;i < 4;i++){
+    for(j=0; j < 4;j++){
+      cin >> bCan[i][j];
+  }
+  for(i = 0;i < 9;i++{
+    can[i][0
+  
+
+  return 0;
+}

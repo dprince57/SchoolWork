@@ -1,0 +1,51 @@
+/usr/bin/startxfce4: X server already running on display :0
+xrdb:  "Xft.hinting" on line 9 overrides entry on line 6
+xrdb:  "Xft.hintstyle" on line 11 overrides entry on line 7
+Agent pid 13817
+xfdesktop[13839]: starting up
+xfce4-settings-helper is already running
+Gtk-Message: (for origin information, set GTK_DEBUG): failed to retrieve property `GtkOptionMenu::indicator-size' of type `GtkRequisition' from rc file value "0" of type `glong'
+Gtk-Message: (for origin information, set GTK_DEBUG): failed to retrieve property `GtkOptionMenu::indicator-spacing' of type `GtkBorder' from rc file value "0" of type `glong'
+system-config-printer-applet: failed to start NewPrinterNotification service
+[35;01mwarning: No hp: or hpfax: devices found in any installed CUPS queue. Exiting.[0m
+
+[01mHP Linux Imaging and Printing System (ver. 3.11.3a)[0m
+[01mSystem Tray Status Service ver. 2.0[0m
+
+Copyright (c) 2001-9 Hewlett-Packard Development Company, LP
+This software comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to distribute it
+under certain conditions. See COPYING file for more details.
+
+Traceback (most recent call last):
+  File "/usr/lib64/python2.6/site-packages/blueman/plugins/BasePlugin.py", line 65, in _load
+    self.on_load(parent)
+  File "/usr/lib64/python2.6/site-packages/blueman/plugins/applet/KillSwitch.py", line 52, in on_load
+    raise Exception("Failed to initialize killswitch manager")
+Exception: Failed to initialize killswitch manager
+
+** (xfce4-session:13825): WARNING **: xfsm-shutdown-helper.c:157: Failed to contact HAL: Rejected send message, 1 matched rules; type="method_call", sender=":1.133" (uid=1281 pid=13825 comm="/usr/bin/xfce4-session) interface="org.freedesktop.Hal.Device.SystemPowerManagement" member="ThisMethodMustNotExistInHal" error name="(unset)" requested_reply=0 destination="org.freedesktop.Hal" (uid=0 pid=2058 comm="/usr/sbin/hald))
+** Message: xfsm-shutdown-helper.c:274: HAL not available or does not permit to shutdown/reboot the computer, trying sudo fallback instead.
+Terminal: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.0.
+/etc/xfce/xdg/xfce4/xinitrc: line 142: unsetenv: command not found
+/etc/xfce/xdg/xfce4/xinitrc: line 142: unsetenv: command not found
+Agent pid 13817 killed
+xfce4-menu-plugin: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.0.
+polkit-gnome-authentication-agent-1: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.0.
+ plugins
+blueman-applet version 1.22 starting
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Using file config backend
+Deleting plugin instance <blueman.plugins.applet.KillSwitch.KillSwitch object at 0xf5ead0>
+xfsettingsd: Fatal IO error 11 (Resource temporarily unavailable) on X server :0.
+The application 'xfce4-panel' lost its connection to the display :0.0;
+most likely the X server was shut down or you killed/destroyed
+the application.

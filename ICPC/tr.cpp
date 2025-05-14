@@ -1,0 +1,30 @@
+#include <iostream>
+
+using namespace std;
+
+int dSeek(int x, int y, int d,int mD, int pX, int pY);
+
+int main()
+{
+  int x,y,tot,mD;
+  int res = 0;
+  int i, Tc;
+  cin >> Tc;
+  for(i=0;i<Tc;i++){
+    cin >> x >> y;
+    if(x > y){mD = x;
+    }else{mD =y;}
+    cout << dSeek(0,0,1,mD,x,y) << endl;
+  }
+  return 0;
+}
+int dSeek(int x,int y, int d, int mD, int pX, int pY)
+{
+  int tempx,tempy,res;
+  if(x > pX || y > pY){return 0	;}
+  if(d >= mD){return 1;}
+  tempx = x + d;
+  tempy = y + d;
+  d = d << 1;
+  return (dSeek(tempx,y,d,mD,pX,pY) + dSeek(x, tempy, d,mD, pX, pY))+1;
+}

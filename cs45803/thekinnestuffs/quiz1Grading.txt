@@ -1,0 +1,14 @@
+1) 4 pts.
+6 things to put in order
+4(the longest chain that was correct / 6)
+
+2, 3) 2 pts each part.
+Were supposed to be proofs, using the definition.
+2, 1, or 0 points.
+2 - used the definition correctly
+ a) on #2 - give constant c and n0
+ b) use the limit definition
+
+Note, for problem 3, first you are given a constant c.  It could be 
+really big, but constant.  Then you have solve for n0 so that 
+f(n) <= c*g(n) for every n >= n0.

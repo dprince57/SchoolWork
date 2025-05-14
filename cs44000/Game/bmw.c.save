@@ -1,0 +1,392 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <GL/glut.h>
+
+#define WALKFILE   "walk1.txt"
+#define MAPFILE    "map.txt"
+
+#define DEGRAD        57.295779513
+#define K           1024
+
+#define CT_FLOOR       0
+#define CT_EAST        1
+#define CT_NORTH       2
+#define CT_WEST        3
+#define CT_SOUTH       4
+#define CT_WALL        9
+
+#define TOOS(X)     ((X) < NEAR)
+#define TOOB(X)     ((X) > (CELLSIZE-NEAR))
+
+#define NEAR          1.0
+#define CELLSIZE      5.0
+#define MSIZ          99
+#define WSIZ          MSIZ * CELLSIZE
+#define FUDGE         0.2
+
+#define WALLHGT       4.0
+#define MAXFUDGE      25
+#define NBOB          101
+#define MBUL          25
+
+#define EXPTICKS      15
+
+#define MAXTICKS      60
+#define NSLIDES        8
+#define FPS           10
+
+typedef
+  unsigned char
+uchar;
+
+typedef struct viewer {
+  GLfloat x,y,z;
+  GLfloat theta, phi;
+  GLfloat vx,vy,vz;
+} VIEWER;
+
+typedef struct bullet {
+  int flag;
+  int counter;
+  VIEWER dir;
+} BULLET;
+
+typedef struct monstertype {
+  GLfloat lowerleglen, upperleglen, bodylen, headrad;
+  GLfloat x,y,z;
+  GLfloat heading;
+  GLfloat leftleg,rightleg;
+  GLfloat leftankle,rightankle;
+  int nslides, fps, flag;
+} MONSTER;
+
+typedef struct walkdata {
+  GLfloat leftleg[NSLIDES];
+  GLfloat rightleg[NSLIDES];
+  GLfloat leftankle[NSLIDES];
+  GLfloat rightankle[NSLIDES];
+  GLfloat height[NSLIDES];
+  GLfloat ds[NSLIDES];
+  int fps;
+} WALK;
+
+uchar map[MSIZ][MSIZ];
+uchar nmap[MSIZ][MSIZ];
+
+int automode;
+
+GLuint walltex, ceilingtex;
+
+GLfloat pos0[] = {  1.0,  3.0,  4.0,  1.0};
+GLfloat pos1[] = { -1.0,  3.0,  4.0,  1.0};
+GLfloat amb[] =  {  0.5,  0.5,  0.5,  1.0};
+GLfloat dif[] =  {  0.5,  0.5,  0.5,  1.0};
+GLfloat spe[] =  {  0.9,  0.9,  0.9,  1.0};
+
+GLfloat matamb[] = {0.30,  0.30,  0.30,  1.0};
+GLfloat matdif[] = {0.50,  0.50,  0.50,  1.0};
+GLfloat matspe[] = {0.10,  0.10,  0.10,  1.0};
+
+GLfloat monamb[] = {0.60,  0.10,  0.10,  1.0};
+GLfloat mondif[] = {0.10,  0.10,  0.10,  1.0};
+GLfloat monspe[] = {0.10,  0.10,  0.80,  1.0};
+
+GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat red[] = {1.0, 0.4, 0.4, 1.0};
+
+GLUquadric *body;
+MONSTER bob[NBOB];
+WALK walk1;
+BULLET ping;
+
+double pov;
+VIEWER moi;
+
+//NEW STUFF
+void text(int x,int y, int z, char StR[], int repT);
+
+void mymenu(int value);
+void processMenuStatus(int status, int x, int y);
+void explode_bob(int i);
+//Height, width, score, fps, and menuflag intergers
+int w,h;
+int mainMenu;
+float fps;
+float score;
+int bobL = NBOB;
+int menuFlag = 0;
+//Variables for Frames per second counter.
+int frame;
+float time, timebase;
+
+void setOrthographicProjection();
+void restorePerspectiveProjection();
+
+void read_moi_map(uchar nmap[MSIZ][MSIZ]);
+//
+
+void display();
+void animate();
+void animate_bullets();
+void reshape(int w, int h);
+void arrows(int c, int x, int y);
+void keyboard(unsigned char c, int x, int y);
+
+void init();
+void update_viewer();
+
+void building();
+void bullets();
+void monster(MONSTER *p);
+int get_cell_type(GLfloat x, GLfloat z);
+
+int main(int argc, char *argv[])
+{
+
+  pov = (argc == 1) ? 60.0 : atof(argv[1]);
+  glutInit(&argc, argv);
+  glutInitWindowSize(1000,800);
+  glutInitWindowPosition(400,100);
+
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+  glutCreateWindow("BOB: The Game");
+
+  glutKeyboardFunc(keyboard);
+  glutDisplayFunc(display);
+  glutSpecialFunc(arrows);
+  glutReshapeFunc(reshape);
+  glutIdleFunc(animate);
+
+  init();
+  display();
+
+
+  glutMainLoop();
+}
+
+// TEST1
+void setOrthographicProjection(){
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  gluOrtho2D(0,w,h,0);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void restorePerspectiveProjection(){
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void processMenuStatus(int status, int x, int y){
+
+  if(status == GLUT_MENU_IN_USE){
+    printf("Menu in use\n");
+    menuFlag = 1;
+  }else{
+    printf("Menu not in use\n");
+    menuFlag = 0;
+  }
+}
+
+void mymenu(int value){
+  int i;
+  switch(value){
+    case 1:
+      bobL = NBOB;
+      score = 0;
+      for(i=0;i<NBOB;i++)
+        bob[i].flag = 0;
+      break;
+    case 2:
+      printf("Exit gracefully\n");
+      kill(getpid(),9);
+      break;
+  }
+}
+
+void text(int x, int y, int z,char StR[], int repT)
+{
+  int i;
+  char text[32];
+  sprintf(text, "%s: %d",StR,repT);
+  glColor3f(1.0f,0.0f,0.0f);
+  glRasterPos3f(x,y,z);
+  for(i=0;text[i] != '\0';i++){
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,text[i]);
+  }
+}
+
+//
+
+void start_monster(MONSTER *p)
+{
+  p->fps = lrand48() % FPS;
+  p->nslides = 0;
+}
+void keyboard(unsigned char c, int x, int y)
+{
+  int i;
+  switch(c){
+    case 27:  /* escape key */
+      kill(getpid(),9);
+      exit(0);
+    case 'w':
+      ping.flag = 1;
+      ping.counter = 0;
+      ping.dir = moi;
+      ping.dir.y /= 2.0;
+      break;
+    case 'p':
+      automode = 1 - automode;
+      if(automode){
+        for(i=0;i<NBOB;i++)
+          start_monster(bob+i);
+      }
+      break;
+  }
+  update_viewer();
+  glutPostRedisplay();
+}
+void move_viewer(int dir)
+{
+  GLfloat tx,tz;
+  int k;
+
+  if(dir > 0){
+    tx = moi.x + moi.vx;
+    tz = moi.z + moi.vz;
+    if(get_cell_type(tx,tz) == CT_FLOOR){
+      moi.x += moi.vx;
+      moi.z += moi.vz;
+    } else {
+      k = 0;
+      do {
+        if(++k == MAXFUDGE){
+          fprintf(stderr,"maxfudge in move_viewer\n");
+          break;
+        }
+        tx = moi.x + ((drand48() - 0.5)/10.0);
+        tz = moi.z + ((drand48() - 0.5)/10.0);
+      } while(get_cell_type(tx,tz) != CT_FLOOR);
+      moi.theta += (drand48() - 0.5);
+      moi.x = tx;
+      moi.z = tz;
+    }
+  } else {
+    tx = moi.x - moi.vx;
+    tz = moi.z - moi.vz;
+    if(get_cell_type(tx,tz) == CT_FLOOR){
+      moi.x -= moi.vx;
+      moi.z -= moi.vz;
+    } else {
+      do {
+        k = 0;
+        if(++k == MAXFUDGE){
+          fprintf(stderr,"maxfudge in move_viewer\n");
+          break;
+        }
+        tx = moi.x + ((drand48() - 0.5)/10.0);
+        tz = moi.z + ((drand48() - 0.5)/10.0);
+      } while(get_cell_type(tx,tz) != CT_FLOOR);
+      moi.theta += (drand48() - 0.5);
+      moi.x = tx;
+      moi.z = tz;
+    }
+  }
+  pos1[0] = moi.x;
+  pos1[1] = moi.y;
+  pos1[2] = moi.z;
+  glLightfv(GL_LIGHT0, GL_POSITION, pos1);
+}
+void arrows(int c, int x, int y)
+{
+  switch(c){
+    case GLUT_KEY_LEFT:
+      moi.theta -= 0.05;
+      break;
+    case GLUT_KEY_UP:
+      move_viewer( 1);
+      break;
+    case GLUT_KEY_DOWN:
+      move_viewer(-1);
+      break;
+    case GLUT_KEY_RIGHT:
+      moi.theta += 0.05;
+      break;
+  }
+  update_viewer();
+  glutPostRedisplay();
+}
+void reshape(int ww, int hh)
+{
+  w = ww;
+  h = hh;
+  glViewport(0,0,w,h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(pov, (GLdouble)w/(GLdouble)h, 0.001, 90.0);
+  glMatrixMode(GL_MODELVIEW);
+}
+void init_monster(MONSTER *p)
+{
+  memset(p,0,sizeof(MONSTER));
+  p->flag = 0;
+  p->lowerleglen = 0.5;
+  p->upperleglen = 0.5;
+  p->bodylen = 0.5 + drand48() * 1.0;
+  p->headrad = 0.1 + drand48() * 0.4;
+  p->heading = 360.0 * drand48(); 
+  p->y = 1.0;
+  do {
+    p->x = drand48() * WSIZ;
+    p->z = drand48() * WSIZ;
+  } while(get_cell_type(p->x,p->z) != CT_FLOOR);
+}
+void read_map(uchar map[MSIZ][MSIZ])
+{
+  FILE *fd;
+  int i,j,k;
+
+  fd = fopen(MAPFILE,"r");
+  if(!fd){
+    fprintf(stderr,"Map file '%s' missing?\n", MAPFILE);
+    exit(0);
+  }
+  for(i=0;i<MSIZ;i++)
+    for(j=0;j<MSIZ;j++){
+      fscanf(fd,"%1d", &k);
+      map[j][MSIZ-1-i] = k;
+    }
+  fclose(fd);
+}
+void read_walk(WALK *w)
+{
+  FILE *fd;
+  int i;
+
+  fd = fopen(WALKFILE,"r");
+  if(!fd){
+    fprintf(stderr,"Walk file '%s' missing?\n", WALKFILE);
+    exit(0);
+  }
+  for(i=0;i<NSLIDES;i++)
+    fscanf(fd,"%f %f %f %f %f %f\n",
+      &w->leftleg[i],
+      &w->rightleg[i],
+      &w->leftankle[i],
+      &w->rightankle[i],
+      &w->height[i],
+      &w->ds[i]);
+  fclose(fd);
+  w->fps = FPS;
+}
+void init()
+{
+  int i,j;
+
+  score = 0;
+  fps = 0;

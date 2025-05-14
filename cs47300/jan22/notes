@@ -1,0 +1,14 @@
+
+crypt(char *plaintext, char *salt); returns a char *ciphertext (in
+  human readable form) (man 3 crypt)
+
+Tools for cryptography:
+-----------------------
+ 1. random number generator
+ 2. hashing function
+      arbitrary data --[SHA-256]--> 256-bit hash
+        (a) two different strings do not hash to same value
+        (b) "impossible" to reverse the function
+        (c) fast
+ 3. block cipher (shared key) AES
+ 4. key exchange algorithm

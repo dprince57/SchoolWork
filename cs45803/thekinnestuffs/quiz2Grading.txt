@@ -1,0 +1,33 @@
+Grading information for Quiz2.
+20 points total.
+
+Each of the 4 problems was graded out of 1 point.  The total was added
+up and written on the lower-right hand corner of the back of the
+paper.  Then this value is multiplied by 5 and put into blackboard.
+
+1) 0, 1/2, or 1 point.
+1 - correct final solution and work showing how derived.
+1/2 - something correct was said and set up, but went wrong somewhere
+      along the way.
+0 - did not set the problem up right at all.
+
+
+2) There were 6 functions.  Grade was given for longest chain of 
+   functions that were all in the right order.  So, if there was a 
+   subset of 4 functions on your list that was correct, you'd 
+   get 4/6.
+
+
+3) 0, 1/3, 1/2, 2/3, 1.
+1 - correct answer and derivation.
+2/3 - most of the derivation is correct.
+1/2 - some of the setup is correct, but then it goes wrong somewhere.
+1/3 - tried to apply the master theorem, and did it correct except
+      fact that a = n is not a constant, came up with n^(log n) as answer.
+
+4) 0, 1/3, 1/2, 2/3, 1.
+1 - correct on both parts of the problem.
+2/3 - one of the two parts was right, and the other was close.
+1/2 - one of the two parts right, the other wrong.
+1/3 - some things that were on the right track, but not correct on 
+      either part.

@@ -1,0 +1,9 @@
+You need to make your program match the behavior of my program that you can
+run in the SOLUTION directory. The last few options when you run it with -h
+are the new ones you need to implement. Check the class recording from
+April 3 on getting started and some tips.
+
+Note that you do not have a hwcheck available to use for testing your program,
+but I probably will use a hwcheck with grading. So you need to make sure your
+program behaves exactly the same as the one in the SOLUTION directory - same
+exact output, same exact behavior.

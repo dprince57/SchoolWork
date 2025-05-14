@@ -1,0 +1,14 @@
+EAX = Extensible authentication exchange
+  - used by wpa2 routers
+
+CMAC - NIST standard
+
+Attacks:
+  * replay attack
+    - somebody saves a packet(s) read from a network, and re-broadcast
+      the packet.
+    - prevented by using nonces = number used once.
+
+  * man-in-the-middle attack
+    - counter mode
+    - cipher block chaining.

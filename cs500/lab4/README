@@ -1,0 +1,38 @@
+In this lab we make some updates to the fasta program that we worked on in class.
+
+The files in this directory were copied from ~cs500/public_html/fasta/
+
+You should do all of the tasks that are labeled lab4 in comments in the code.
+A correct working version of my compiled code is in the SOLUTION directory
+of this assignment. You should run my program to see how it is supposed to work.
+
+You should match the formatting and output of my program exactly.
+
+You can also use the hwcheck option to check your program's output against
+mine on test inputs. You do this...
+
+make
+submit --hwcheck
+
+
+Points/grading... You should work on the program in the following order,
+and each part is worth the given # of points.
+1) --help usage statement: 1 pt
+2) read from argv[1] rather than always "example.fa": 1 pt
+3) --print: 1 pt
+4) --seq_count: 1 pt
+5) --max_length: 2 pts
+6) --min_length: 2 pts
+7) --GC: 2 pts
+8) free: 2 pts
+
+
+Note that your program should also have a correct free_fasta function, so
+there are not any memory leaks. You can run the following to check your
+program.
+
+valgrind --leak-check=full ./fasta_driver.o example.fa --GC
+valgrind --leak-check=full ./fasta_driver.o /u1/junk/kinne/genomes/gene_transcripts/GRCh38_latest_rna.fna.100k --GC
+valgrind --leak-check=full ./fasta_driver.o /u1/junk/kinne/genomes/gene_transcripts/GRCh38_latest_rna.fna --GC
+
+That last one will take a little while to run (a minute or few).

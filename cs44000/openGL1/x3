@@ -1,0 +1,21 @@
+void keyboard(unsigned char c, int x, int y)
+{
+  switch(c){
+    case 27:  /* escape key */
+      exit(0);
+    case 'h':
+      moi.theta -= 0.1;
+      break;
+    case 'k':
+      moi.speed += 0.01;
+      break;
+    case 'j':
+      moi.speed *= 0.9;
+      break;
+    case 'l':
+      moi.theta += 0.1;
+      break;
+  }
+  update_viewer();
+  glutPostRedisplay();
+}

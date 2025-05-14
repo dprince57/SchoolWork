@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="chrome://mozapps/content/downloads/downloads.xul#downloadManager"
+                   width="485"
+                   height="300"
+                   sizemode="normal"
+                   screenX="134"
+                   screenY="315" />
+  <RDF:Description RDF:about="chrome://pippki/content/exceptionDialog.xul">
+    <NC:persist RDF:resource="chrome://pippki/content/exceptionDialog.xul#exceptiondialog"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="chrome://browser/content/browser.xul">
+    <NC:persist RDF:resource="chrome://browser/content/browser.xul#main-window"/>
+    <NC:persist RDF:resource="chrome://browser/content/browser.xul#sidebar-box"/>
+    <NC:persist RDF:resource="chrome://browser/content/browser.xul#sidebar-title"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="chrome://mozapps/content/downloads/downloads.xul">
+    <NC:persist RDF:resource="chrome://mozapps/content/downloads/downloads.xul#downloadManager"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="chrome://browser/content/browser.xul#main-window"
+                   height="956"
+                   screenX="0"
+                   screenY="0"
+                   sizemode="normal"
+                   width="738" />
+  <RDF:Description RDF:about="chrome://pippki/content/exceptionDialog.xul#exceptiondialog"
+                   screenX="247"
+                   screenY="238"
+                   width="500"
+                   height="480" />
+  <RDF:Description RDF:about="chrome://browser/content/browser.xul#sidebar-box"
+                   sidebarcommand=""
+                   width=""
+                   src="" />
+  <RDF:Description RDF:about="chrome://mozapps/content/downloads/unknownContentType.xul">
+    <NC:persist RDF:resource="chrome://mozapps/content/downloads/unknownContentType.xul#unknownContentType"/>
+  </RDF:Description>
+  <RDF:Description RDF:about="chrome://mozapps/content/downloads/unknownContentType.xul#unknownContentType"
+                   screenX="142"
+                   screenY="328" />
+</RDF:RDF>

@@ -1,0 +1,47 @@
+Lab9 - Project. For this lab, you will complete the TODO items marked in
+binding_region.c.  I suggest working on them in the following order:
+
+1) pbms_* functions - these are functions to keep a list of pbm structures. This
+will be very similar to the brs_* functions that are in the file already for
+keeping a list of br regions.
+
+2) mutations_* functions - these are functions to keep a list of mutation structures.
+This will be very similar to the brs_* functions that are in the file already
+for keeping a list of br regions.
+
+3) seq_print_pbms_brs - this function is used to print the sequence along with
+the escore information and binding sites. The part for the escores and binding
+sites are pretty well separate, so you can do the escores part first, and once
+that is working, then do the binding site part.
+
+4) br_seq_mutate - this is the function that should loop through all possible
+mutations and find the best one. Note that even if you don't get seq_print_pbms_brs
+working properly, you can still work on br_seq_mutate (they are independent of
+each other).  For br_seq_mutate, you will use the functions in combinations.c/.h
+to loop over all combinations of positions in the sequence to try mutating. And
+you will use the functions in all_values.c/.h to loop over all possible letter
+values these positions could change to. You should follow the outline of the comments
+left in the function.
+
+Jeff's correct working version is in the SOLUTION directory. If you find any problems
+with it, let me know.
+
+
+
+Below is information about the data files we are using. This is FYI, you can ignore this if you like.
+
+PBM files were downloaded from UniProbe - http://the_brain.bwh.harvard.edu/uniprobe/browse.php
+
+Note that according to the readme.txt files when you download the PBM data, the columns in the pbm files are:
+   1: 8-mer sequence
+   2: complement of 8-mer sequence
+   3: Enrichment Score
+   4: Median Intensity Signal
+   5: z-scores calculated from the median SI data.
+
+The dna sequence file CG5080-WT.asc appears to be from a region of the CG5080 gene in the 2L chromosome of D. mel. Note that a BLAST of the sequence gives a 100% match starting at position 1162075 of the 2L gene.  
+You can view this match in a genome browser (as of 1/30/2023) here -  
+  https://www.ncbi.nlm.nih.gov/nuccore/AE014134.6?report=graph&rid=XG0STJ7C016[AE014134.6]&tracks=[key:sequence_track,name:Sequence,display_name:Sequence,id:STD1,category:Sequence,annots:Sequence,ShowLabel:true][key:gene_model_track,CDSProductFeats:false][key:alignment_track,name:other%20alignments,annots:NG%20Alignments|Refseq%20Alignments|Gnomon%20Alignments|Unnamed,shown:false]&v=1162028:1163068&appname=ncbiblast&link_loc=fromHSP
+The CG5080-WT.asc sequence seems to be from an intron of the gene.
+Information about the CG5080 gene is here - 
+  https://flybase.org/reports/FBgn0031313

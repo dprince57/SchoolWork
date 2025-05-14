@@ -1,0 +1,24 @@
+evaluate(board,player?)
+transformation = canonical(canboard,board)
+
+player 1
+--------
+makes random moves and learns by creating a dat base
+
+player 2
+--------
+random moves
+
+
+database
+--------
+key = board(string 9 little numbers 0,1,-1)
+for each subsequent move:
+  keep track of wins, losses, ties
+  summary = (3*wins+tie)/(1+games) 
+ 
+
+  history of game
+  -----------------
+  |4|2|8|7|0| | | |
+  -----------------

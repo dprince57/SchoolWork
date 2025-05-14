@@ -1,0 +1,28 @@
+For programs that are worth 10/10, here are the guidelines...
+
+10 
+ - correct output on all test cases, on time.
+
+9 
+ - correct output on all test cases, slightly late.
+
+8 
+ - right on most test cases, and/or late.
+ - bases - correct on all bases <= 10.
+ - rodcutting - correct on either greedy or dynamic but not both.
+
+7 
+ - right on at least some test cases, and/or late.
+ - 4thought - not following order of operations, but otherwise correct.
+ - fall programming contest - formatting error, otherwise correct.
+
+
+Project checking assignment, HW project1 in BB
+* 15 points total.
+* full credit if you met with me, having something along the lines
+  of what I suggested, and have it documented
+* -3 if you don't have documented what your progress is.
+* 10/15 if you have something copied from the internet, but there 
+  is no documentation from you about how it works, how to run it, etc.
+* 8/15 if there is something, but it doesn't look like much yet.
+* 5/15 if there is something but shows very minimal effort.

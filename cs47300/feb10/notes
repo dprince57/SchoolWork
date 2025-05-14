@@ -1,0 +1,5 @@
+Order of packet info:
+
+- Ethernet Header
+- IP Header
+- UDP/TCP Header

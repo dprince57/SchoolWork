@@ -1,0 +1,30 @@
+Layers:
+
+ * Application layer
+ * TCP/UDP layer
+   - TCP is persistent (Stays up), reliable, sequenced
+   - UDP is one way, one packet, unreliable
+ * IP layer
+ * Hardware layer
+
+Client task:
+ * Prepare a sockaddr_in
+   - type AF_INET
+   - address (IP): 32-bit unsigned int
+     * IPV4 is 32-bit, IPV6 is 128-bit
+   - port : 16-bit unsigned short int (network byte order)
+ * Create a socket(AF_INET,SOCK_STREAM,)
+
+Server stuff:
+ * socket
+   - same as client
+ * bind (almost the same as connect)
+ * listen
+   - accepting new connections
+ * loop:
+   - check for new connections
+   - has anyone sent me anything? (read if yes)
+   - process the data just read
+   - does anyone need to be written to? (write if yes)
+   - handle exceptions (disconnecting)
+   - sleep

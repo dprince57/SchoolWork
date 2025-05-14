@@ -1,0 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+  int numLines, numbersPerLine;
+
+  scanf("%i", &numLines);
+  scanf("%i", &numbersPerLine);
+
+  return 0;
+}

@@ -1,0 +1,18 @@
+Examples of C syntax and keywords...
+* arithmetic
+* for loop
+* if / else
+* while loop
+* errors
+* C strings (array of characters), printf, scanf
+* data types
+* command-line arguments
+* boolean conditions - anything but 0 is true, short circuit evaluation
+* read stdin or file one char at a time / one line at a time - print line numbers, convert to uppercase
+* memory allocation - print file in reverse order, read integers or words and sort
+
+
+* bit operations - bit operations quiz
+* read from file in blocks - some file format (BAM/SAM - https://en.wikipedia.org/wiki/Binary_Alignment_Map)
+* structures - some file format
+* defining and using functions - some file format

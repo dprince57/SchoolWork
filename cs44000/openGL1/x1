@@ -1,0 +1,1 @@
+void keyboard(unsigned char c, int x, int y);

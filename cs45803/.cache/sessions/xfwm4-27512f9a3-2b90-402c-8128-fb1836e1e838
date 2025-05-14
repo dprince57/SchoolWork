@@ -1,0 +1,23 @@
+[CLIENT] 0x2a0473a
+  [CLIENT_LEADER] 0x2a00001
+  [RES_NAME] Dialog
+  [RES_CLASS] Firefox
+  [WM_NAME] Confirm close
+  [WM_COMMAND] (1) "firefox"
+  [GEOMETRY] (379,433,512,134)
+  [GEOMETRY-MAXIMIZED] (379,433,512,134)
+  [SCREEN] 0
+  [DESK] 0
+  [FLAGS] 0x10000
+[CLIENT] 0x2a0006a
+  [CLIENT_LEADER] 0x2a00001
+  [WINDOW_ROLE] browser
+  [RES_NAME] Navigator
+  [RES_CLASS] Firefox
+  [WM_NAME] CS 458/558 f2013 Notes - Google Drive - Mozilla Firefox
+  [WM_COMMAND] (1) "firefox"
+  [GEOMETRY] (138,22,994,956)
+  [GEOMETRY-MAXIMIZED] (276,30,994,956)
+  [SCREEN] 0
+  [DESK] 0
+  [FLAGS] 0x10000

@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# This script is used to get class files from the /u1/junk directory
+# in order to maintain notes for the classes.
+# 
+# This script was created on September 22, 2014, by Jerald Worthington.
+# This script is fair game for anyone to use as well as modify for their
+# own usage.
+#
+
+if [ -z $1 ]
+then
+  echo usage: $0 class# [date];
+  exit 0;
+fi
+
+if [ -z $2 ]
+then
+  cp -r /u1/junk/$1/$(date +%b%d | tr '[:upper:]' '[:lower:]') .;
+  exit 0;
+elif [ -n $2 ]
+then
+  cp -r /u1/junk/$1/$2 .;
+  exit 0;
+fi

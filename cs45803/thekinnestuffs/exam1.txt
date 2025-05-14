@@ -1,0 +1,326 @@
+        LAST NAME:
+(according to BB)
+
+       FIRST NAME: 
+(according to BB)
+
+
+Note: * is times, / is divide by, ^ is powering/exponentiating
+Note: 26 points total
+
+
+
+(1) 1 point each
+For each of the following, indicate whether f(n) = O(g(n)) and/or g(n) = O(f(n)).  
+
+1a) f(n) = n^2 + 5*n + 3 and g(n) = 5*n^(1.5) + 6*n + 7
+
+
+
+
+
+
+1b) f(n) = n * (log(n))^2 and g(n) = n^(1.5)
+
+
+
+
+
+
+1c) f(n) = 2^n and g(n) = 2^(2n).  
+
+
+
+
+
+
+
+(2) 2 points
+Pick 1a, 1b, or 1c and use the definition of big-O to prove what you claimed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(3) 2 points each
+Solve the given recurrence relations.  Assume for each that T(1) = 1.
+
+3a) T(n) = 3 * T(n/2) + n^2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3b) T(n) = 4 * T(sqrt(n)) + (log(n))^2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(4) 2 points
+Use induction to prove that the sum 
+    (1 + 2 + 4 + 8 + ... 2^n) 
+is <= 2^(n+1).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(5) 5 points
+ICPC programming question.
+The first line of input has two numbers.  The first indicates
+how many test cases there will be.  The second indicates how many
+numbers will be listed with each test case.  For each test case, 
+you should read in the numbers and count how many are positive, and
+then output both the case number and the count.
+
+Sample Input:
+      3 7
+      3 5.6 7 -3.2 0 -1.2 123.3
+      -234 -44 -22 98 88.2 -88.3 -11.78
+      2344 4 2 1 88 7 33 42.788
+
+Sample Output:
+      Case 1: 2
+      Case 2: 5
+      Case 3: 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(6) 5 points
+Graph programming question.
+Suppose you have some code that has a 2-dimensional array that stores
+an adjacency matrix.  It was declared as 
+   int G[100][100];
+and then values were filled in for some graph.
+Write C/C++ code to compute how many vertices are isolated (do not have 
+any edges), and to compute the maximum degree (largest number of edges for 
+a single vertex).  The code should output the number of isolated 
+vertices and the maximum degree.
+
+If G were the complete graph, the correct output would be:
+    Isolated vertices: 0
+    Maximum degree: 100
+
+If G were a graph with no edges, the correct output would be:
+    Isolated vertices: 100
+    Maximum degree: 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(7) 5 points
+For one of the following algorithms, give a basic description of the 
+algorithm.  You must fit your description in the space provided.  I will
+not read or count anything written on the back of the page, etc.
+
+Algorithms: breadth first search, dijkstra's algorithm, maximum subarray 
+   divide and conquer, subset sum dynamic programming.
+
+Description...
+
+7a) What is the input data for the algorithm?
+
+
+
+
+
+7b) What problem does the algorithm solve?
+
+
+
+
+
+7c) Basic description of how the algorithm works.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+7d) Running time of the algorithm.
+
+
+
+
+
+7e) Strength or weakness of the algorithm not already mentioned above.
+
+    

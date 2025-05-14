@@ -1,0 +1,39 @@
+Your Name: 
+
+Your cs458xx login username: 
+
+
+
+Take-home portion of calibration quiz.  Please spend about 1 hour trying to 
+complete the following programs.  You will recieve credit (pass/fail) for 
+this quiz just for trying.  Do not spend more than 1 hour, and do not ask 
+for help from anyone.  
+
+
+To turn them in the programs, log in to the CS server using your
+cs458xx account, create a directory in your account called handin, and
+leave the programs in your handin directory.
+
+Please also answer the questions (1b, 1c, 2b).  Copy this file into your
+handin directory and answer 1b, 1c, and 2b in this file.
+
+
+
+(1a) Write a program to ask the user for an integer and test if it is prime.
+Call the program prime (e.g., prime.c, prime.cpp, or prime.java).
+
+(1b) What changes would be made to compute the number of different
+divisors (whether prime or not)?
+
+(1c) What changes would be made to compute the number of different
+prime factors?
+
+
+
+(2a) Write a program to ask the user for a word to search, ask them for a text 
+file to search through, and then search through the text file for that word.
+Call the program search (e.g., search.c, search.cpp, or search.java)
+
+(2b) What changes would be made to keep track of the number of
+ocurrences of all words in the text file, and output which is the most
+common?  What data structure would you use for this?

@@ -1,0 +1,7 @@
+client                      server
+------                      ------
+1. create a socket          1. create a socket (man 2 socket)
+2. tries to connect to      2. bind to a port (man 2 bind)
+   a server                 3. listen for connections (man 2 listen)
+   (man 2 connect)          4. accepts new connections (man 2 accept)
+3. read/write ....

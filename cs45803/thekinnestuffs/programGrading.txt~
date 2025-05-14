@@ -1,0 +1,17 @@
+For programs that are worth 10/10, here are the guidelines...
+
+10 
+ - correct output on all test cases, on time.
+
+9 
+ - correct output on all test cases, slightly late.
+
+8 
+ - right on most test cases, and/or late.
+ - bases - correct on all bases <= 10.
+ - rodcutting - correct on either greedy or dynamic but not both.
+
+7 
+ - right on at least some test cases, and/or late.
+ - 4thought - not following order of operations, but otherwise correct.
+ - fall programming contest - formatting error, otherwise correct.

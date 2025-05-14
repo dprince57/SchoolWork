@@ -1,0 +1,22 @@
+
+Current:
+
+ - Makefile
+     two C files
+ - Maze world.
+     Arrow keys to move.
+     'p' to start/stop walkers.
+ - One simple bullet.
+     Use W key to shoot.
+     Added 'explosion' when bullet hits wall.
+     Kills bob's if hit.
+ - Textures for walls and ceiling.
+     Black floor so we can see the bullet.
+
+Next:
+
+ - Header file, better C file organization.
+ - Data file to check which rooms need to be drawn.
+ - Triangulated, smooth monsters.
+ - Traverse-the-maze mode (a DisneyWorld ride).
+

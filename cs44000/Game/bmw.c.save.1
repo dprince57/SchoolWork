@@ -1,0 +1,890 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <GL/glut.h>
+
+#define WALKFILE   "walk1.txt"
+#define MAPFILE    "map.txt"
+
+#define DEGRAD        57.295779513
+#define K           1024
+
+#define CT_FLOOR       0
+#define CT_EAST        1
+#define CT_NORTH       2
+#define CT_WEST        3
+#define CT_SOUTH       4
+#define CT_WALL        9
+
+#define TOOS(X)     ((X) < NEAR)
+#define TOOB(X)     ((X) > (CELLSIZE-NEAR))
+
+#define NEAR          1.0
+#define CELLSIZE      5.0
+#define MSIZ          99
+#define WSIZ          MSIZ * CELLSIZE
+#define FUDGE         0.2
+
+#define WALLHGT       4.0
+#define MAXFUDGE      25
+#define NBOB          101
+#define MBUL          25
+
+#define EXPTICKS      15
+
+#define MAXTICKS      60
+#define NSLIDES        8
+#define FPS           10
+
+typedef
+  unsigned char
+uchar;
+
+typedef struct viewer {
+  GLfloat x,y,z;
+  GLfloat theta, phi;
+  GLfloat vx,vy,vz;
+} VIEWER;
+
+typedef struct bullet {
+  int flag;
+  int counter;
+  VIEWER dir;
+} BULLET;
+
+typedef struct monstertype {
+  GLfloat lowerleglen, upperleglen, bodylen, headrad;
+  GLfloat x,y,z;
+  GLfloat heading;
+  GLfloat leftleg,rightleg;
+  GLfloat leftankle,rightankle;
+  int nslides, fps, flag;
+} MONSTER;
+
+typedef struct walkdata {
+  GLfloat leftleg[NSLIDES];
+  GLfloat rightleg[NSLIDES];
+  GLfloat leftankle[NSLIDES];
+  GLfloat rightankle[NSLIDES];
+  GLfloat height[NSLIDES];
+  GLfloat ds[NSLIDES];
+  int fps;
+} WALK;
+
+uchar map[MSIZ][MSIZ];
+uchar nmap[MSIZ][MSIZ];
+
+int automode;
+
+GLuint walltex, ceilingtex;
+
+GLfloat pos0[] = {  1.0,  3.0,  4.0,  1.0};
+GLfloat pos1[] = { -1.0,  3.0,  4.0,  1.0};
+GLfloat amb[] =  {  0.5,  0.5,  0.5,  1.0};
+GLfloat dif[] =  {  0.5,  0.5,  0.5,  1.0};
+GLfloat spe[] =  {  0.9,  0.9,  0.9,  1.0};
+
+GLfloat matamb[] = {0.30,  0.30,  0.30,  1.0};
+GLfloat matdif[] = {0.50,  0.50,  0.50,  1.0};
+GLfloat matspe[] = {0.10,  0.10,  0.10,  1.0};
+
+GLfloat monamb[] = {0.60,  0.10,  0.10,  1.0};
+GLfloat mondif[] = {0.10,  0.10,  0.10,  1.0};
+GLfloat monspe[] = {0.10,  0.10,  0.80,  1.0};
+
+GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat red[] = {1.0, 0.4, 0.4, 1.0};
+
+GLUquadric *body;
+MONSTER bob[NBOB];
+WALK walk1;
+BULLET ping;
+
+double pov;
+VIEWER moi;
+
+//NEW STUFF
+void text(int x,int y, int z, char StR[], int repT);
+
+void mymenu(int value);
+void processMenuStatus(int status, int x, int y);
+void explode_bob(int i);
+//Height, width, score, fps, and menuflag intergers
+int w,h;
+int mainMenu;
+float fps;
+float score;
+int bobL = NBOB;
+int menuFlag = 0;
+//Variables for Frames per second counter.
+int frame;
+float time, timebase;
+
+void setOrthographicProjection();
+void restorePerspectiveProjection();
+
+void read_moi_map(uchar nmap[MSIZ][MSIZ]);
+//
+
+void display();
+void animate();
+void animate_bullets();
+void reshape(int w, int h);
+void arrows(int c, int x, int y);
+void keyboard(unsigned char c, int x, int y);
+
+void init();
+void update_viewer();
+
+void building();
+void bullets();
+void monster(MONSTER *p);
+int get_cell_type(GLfloat x, GLfloat z);
+
+int main(int argc, char *argv[])
+{
+
+  pov = (argc == 1) ? 60.0 : atof(argv[1]);
+  glutInit(&argc, argv);
+  glutInitWindowSize(1000,800);
+  glutInitWindowPosition(400,100);
+
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+  glutCreateWindow("BOB: The Game");
+
+  glutKeyboardFunc(keyboard);
+  glutDisplayFunc(display);
+  glutSpecialFunc(arrows);
+  glutReshapeFunc(reshape);
+  glutIdleFunc(animate);
+
+  init();
+  display();
+
+
+  glutMainLoop();
+}
+
+// TEST1
+void setOrthographicProjection(){
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  gluOrtho2D(0,w,h,0);
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void restorePerspectiveProjection(){
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void processMenuStatus(int status, int x, int y){
+
+  if(status == GLUT_MENU_IN_USE){
+    printf("Menu in use\n");
+    menuFlag = 1;
+  }else{
+    printf("Menu not in use\n");
+    menuFlag = 0;
+  }
+}
+
+void mymenu(int value){
+  int i;
+  switch(value){
+    case 1:
+      bobL = NBOB;
+      score = 0;
+      for(i=0;i<NBOB;i++)
+        bob[i].flag = 0;
+      break;
+    case 2:
+      printf("Exit gracefully\n");
+      kill(getpid(),9);
+      break;
+  }
+}
+
+void text(int x, int y, int z,char StR[], int repT)
+{
+  int i;
+  char text[32];
+  sprintf(text, "%s: %d",StR,repT);
+  glColor3f(1.0f,0.0f,0.0f);
+  glRasterPos3f(x,y,z);
+  for(i=0;text[i] != '\0';i++){
+    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,text[i]);
+  }
+}
+
+//
+
+void start_monster(MONSTER *p)
+{
+  p->fps = lrand48() % FPS;
+  p->nslides = 0;
+}
+void keyboard(unsigned char c, int x, int y)
+{
+  int i;
+  switch(c){
+    case 27:  /* escape key */
+      kill(getpid(),9);
+      exit(0);
+    case 'w':
+      ping.flag = 1;
+      ping.counter = 0;
+      ping.dir = moi;
+      ping.dir.y /= 2.0;
+      break;
+    case 'p':
+      automode = 1 - automode;
+      if(automode){
+        for(i=0;i<NBOB;i++)
+          start_monster(bob+i);
+      }
+      break;
+  }
+  update_viewer();
+  glutPostRedisplay();
+}
+void move_viewer(int dir)
+{
+  GLfloat tx,tz;
+  int k;
+
+  if(dir > 0){
+    tx = moi.x + moi.vx;
+    tz = moi.z + moi.vz;
+    if(get_cell_type(tx,tz) == CT_FLOOR){
+      moi.x += moi.vx;
+      moi.z += moi.vz;
+    } else {
+      k = 0;
+      do {
+        if(++k == MAXFUDGE){
+          fprintf(stderr,"maxfudge in move_viewer\n");
+          break;
+        }
+        tx = moi.x + ((drand48() - 0.5)/10.0);
+        tz = moi.z + ((drand48() - 0.5)/10.0);
+      } while(get_cell_type(tx,tz) != CT_FLOOR);
+      moi.theta += (drand48() - 0.5);
+      moi.x = tx;
+      moi.z = tz;
+    }
+  } else {
+    tx = moi.x - moi.vx;
+    tz = moi.z - moi.vz;
+    if(get_cell_type(tx,tz) == CT_FLOOR){
+      moi.x -= moi.vx;
+      moi.z -= moi.vz;
+    } else {
+      do {
+        k = 0;
+        if(++k == MAXFUDGE){
+          fprintf(stderr,"maxfudge in move_viewer\n");
+          break;
+        }
+        tx = moi.x + ((drand48() - 0.5)/10.0);
+        tz = moi.z + ((drand48() - 0.5)/10.0);
+      } while(get_cell_type(tx,tz) != CT_FLOOR);
+      moi.theta += (drand48() - 0.5);
+      moi.x = tx;
+      moi.z = tz;
+    }
+  }
+  pos1[0] = moi.x;
+  pos1[1] = moi.y;
+  pos1[2] = moi.z;
+  glLightfv(GL_LIGHT0, GL_POSITION, pos1);
+}
+void arrows(int c, int x, int y)
+{
+  switch(c){
+    case GLUT_KEY_LEFT:
+      moi.theta -= 0.05;
+      break;
+    case GLUT_KEY_UP:
+      move_viewer( 1);
+      break;
+    case GLUT_KEY_DOWN:
+      move_viewer(-1);
+      break;
+    case GLUT_KEY_RIGHT:
+      moi.theta += 0.05;
+      break;
+  }
+  update_viewer();
+  glutPostRedisplay();
+}
+void reshape(int ww, int hh)
+{
+  w = ww;
+  h = hh;
+  glViewport(0,0,w,h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPerspective(pov, (GLdouble)w/(GLdouble)h, 0.001, 90.0);
+  glMatrixMode(GL_MODELVIEW);
+}
+void init_monster(MONSTER *p)
+{
+  memset(p,0,sizeof(MONSTER));
+  p->flag = 0;
+  p->lowerleglen = 0.5;
+  p->upperleglen = 0.5;
+  p->bodylen = 0.5 + drand48() * 1.0;
+  p->headrad = 0.1 + drand48() * 0.4;
+  p->heading = 360.0 * drand48(); 
+  p->y = 1.0;
+  do {
+    p->x = drand48() * WSIZ;
+    p->z = drand48() * WSIZ;
+  } while(get_cell_type(p->x,p->z) != CT_FLOOR);
+}
+void read_map(uchar map[MSIZ][MSIZ])
+{
+  FILE *fd;
+  int i,j,k;
+
+  fd = fopen(MAPFILE,"r");
+  if(!fd){
+    fprintf(stderr,"Map file '%s' missing?\n", MAPFILE);
+    exit(0);
+  }
+  for(i=0;i<MSIZ;i++)
+    for(j=0;j<MSIZ;j++){
+      fscanf(fd,"%1d", &k);
+      map[j][MSIZ-1-i] = k;
+    }
+  fclose(fd);
+}
+void read_walk(WALK *w)
+{
+  FILE *fd;
+  int i;
+
+  fd = fopen(WALKFILE,"r");
+  if(!fd){
+    fprintf(stderr,"Walk file '%s' missing?\n", WALKFILE);
+    exit(0);
+  }
+  for(i=0;i<NSLIDES;i++)
+    fscanf(fd,"%f %f %f %f %f %f\n",
+      &w->leftleg[i],
+      &w->rightleg[i],
+      &w->leftankle[i],
+      &w->rightankle[i],
+      &w->height[i],
+      &w->ds[i]);
+  fclose(fd);
+  w->fps = FPS;
+}
+void init()
+{
+  int i,j;
+
+  score = 0;
+  fps = 0;
+
+  srand48(getpid());
+
+  moi.x =  7.5;
+  moi.y =  2.0;
+  moi.z =  7.5;
+  moi.theta = M_PI/4.0;
+  moi.phi = 0.0;
+  pos1[0] = moi.x;
+  pos1[1] = moi.y;
+  pos1[2] = moi.z;
+  glLightfv(GL_LIGHT0, GL_POSITION, pos1);
+
+  automode = 1;
+
+  update_viewer();
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_LIGHT0);
+
+  glLightfv(GL_LIGHT0, GL_POSITION, pos1);
+  glLightfv(GL_LIGHT0, GL_AMBIENT,  amb);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE,  dif);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, spe);
+
+  body = gluNewQuadric();
+  gluQuadricDrawStyle(body, GLU_FILL);
+
+  read_walk(&walk1);
+  read_map(map);
+  walltex = readppm("wall.ppm");
+  ceilingtex = readppm("ceiling.ppm");
+
+/* MENU */
+  mainMenu = glutCreateMenu(mymenu);
+  glutAddMenuEntry("Reset",1);        //Exit button in menu
+  glutAddMenuEntry("Exit",2);        //Exit button in menu
+  glutAttachMenu(GLUT_RIGHT_BUTTON);
+  glutMenuStatusFunc(processMenuStatus);
+//
+
+  for(i=0;i<NBOB;i++)
+    init_monster(bob+i);
+  memset(&ping, 0, sizeof(BULLET));
+  printf("done with init\n");
+}
+int get_cell_type(GLfloat x, GLfloat z)
+{
+  int ix,iz;
+
+  ix = (int)(x / CELLSIZE);
+  iz = (int)(z / CELLSIZE);
+  return map[ix][iz];
+}
+unsigned int near_wall(GLfloat x, GLfloat z)
+{
+  unsigned int flags;
+  int ix,iz;
+  GLfloat rx,rz;
+
+  ix = (int)(x / CELLSIZE);
+  iz = (int)(z / CELLSIZE);
+  rx = fmod(x,CELLSIZE);
+  rz = fmod(z,CELLSIZE);
+  flags = 0;
+  if((map[ix+1][iz] != CT_FLOOR) && (rx > CELLSIZE - NEAR)){
+    flags |= 1;
+  } else if((map[ix-1][iz] != CT_FLOOR) && (rx < NEAR)){
+    flags |= 4;
+  }
+  if((map[ix][iz+1] != CT_FLOOR) && (rz > CELLSIZE - NEAR)){
+    flags |= 2;
+  } else if((map[ix][iz-1] != CT_FLOOR) && (rz < NEAR)){
+    flags |= 8;
+  }
+  if(map[ix-1][iz-1] && TOOS(rx) && TOOS(rz)){ flags |= 12; }
+  if(map[ix-1][iz+1] && TOOS(rx) && TOOB(rz)){ flags |=  6; }
+  if(map[ix+1][iz-1] && TOOB(rx) && TOOS(rz)){ flags |=  9; }
+  if(map[ix+1][iz+1] && TOOB(rx) && TOOB(rz)){ flags |=  3; }
+
+  return flags;
+}
+void animate()
+{
+  MONSTER *p;
+  GLfloat tx,tz;
+  int i,j,k;
+  unsigned int f;
+
+  animate_bullets();
+
+  if(!automode){
+    glutPostRedisplay();
+    return;
+  }
+
+  for(i=0;i<NBOB;i++){
+    p = bob + i;
+    if(p->flag == 0){
+      p->fps++;
+      if(p->fps == walk1.fps){
+        if(get_cell_type(p->x,p->z) != CT_FLOOR)
+          fprintf(stderr,"Bob %d is weird.\n", i);
+        tx = p->x + walk1.ds[p->nslides] * cos(p->heading/DEGRAD);
+        tz = p->z + walk1.ds[p->nslides] * sin(p->heading/DEGRAD);
+        f = near_wall(p->x,p->z);
+        switch(f){
+          case  0: break;
+          case  1: p->heading = 180.0; break;
+          case  2: p->heading = 270.0; break;
+          case  3: p->heading = 225.0; break;
+          case  4: p->heading =   0.0; break;
+          case  5:
+          case  6: p->heading = 315.0; break;
+          case  7:
+          case  8: p->heading =  90.0; break;
+          case  9: p->heading = 135.0; break;
+          case 10:
+          case 11:
+          case 12: p->heading =  45.0; break;
+          case 13:
+          case 14:
+          case 15: break;
+        }
+        if(f)
+          p->heading += 90.0*(drand48() - 0.5);
+        p->x += walk1.ds[p->nslides] * cos(p->heading/DEGRAD);
+        p->z += walk1.ds[p->nslides] * sin(p->heading/DEGRAD);
+        p->leftleg = walk1.leftleg[p->nslides];
+        p->rightleg = walk1.rightleg[p->nslides];
+        p->leftankle = walk1.leftankle[p->nslides];
+        p->rightankle = walk1.rightankle[p->nslides];
+        p->y = walk1.height[p->nslides];
+        p->fps = 0;
+        p->nslides++;
+        if(p->nslides == NSLIDES){
+          automode = 1;
+          p->fps = 0;
+          p->nslides = 0;
+        } 
+      }
+    }
+  }
+  update_viewer();
+  glutPostRedisplay();
+}
+void update_viewer()
+{
+  moi.vx = cos(moi.theta);
+  moi.vz = sin(moi.theta);
+}
+void display()
+{
+  int i,j,k,u,v;
+
+  glClearColor(0.0, 0.0, 0.0, 1.0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glLoadIdentity();
+
+  gluLookAt(moi.x, moi.y, moi.z,
+            moi.x + moi.vx, moi.y + moi.vy, moi.z + moi.vz,
+            0.0, 1.0, 0.0);
+
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  matamb);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  matdif);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matspe);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 150.0);
+  glBegin(GL_QUADS);
+    glNormal3f(  0.0,-1.0,  0.0);   /* Ceiling */
+    glVertex3f(  0.0, 0.0,  0.0);
+    glVertex3f( WSIZ, 0.0,  0.0);
+    glVertex3f( WSIZ, 0.0, WSIZ);
+    glVertex3f(  0.0, 0.0, WSIZ);
+  glEnd();
+
+  building();
+  for(i=0;i<NBOB;i++)
+    monster(bob + i);
+  bullets();
+
+//jesus
+//Frame rate calc
+  frame++;
+  time = glutGet(GLUT_ELAPSED_TIME);
+  if(time - timebase > 1000){
+    fps =frame*1000.0/(time-timebase);
+    if(fps < 1.0f)fps = 1;
+    timebase = time;
+    frame = 0.0;
+  }
+//Disableing everything then re-enableing everything to print colored text
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_LIGHT0);
+
+  glPushMatrix();
+  glLoadIdentity();
+  setOrthographicProjection();
+//Printing text to screen
+  text(30,20,0,"FPS",fps);
+  text(30,40,0,"Score",score);
+  text(30,60,0,"Bobs Left",bobL);
+
+  glPopMatrix();
+  restorePerspectiveProjection();
+  glEnable(GL_LIGHTING);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_LIGHT0);
+/*
+  red[0] = drand48();
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,red);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,red);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 1.0);
+  glLineWidth(6.0);
+  glBegin(GL_LINES);
+    glVertex3f(moi.x, moi.y, moi.z);
+    glVertex3f(moi.x+moi.vx,
+               moi.y+moi.vy,
+               moi.z+moi.vz);
+  glEnd();
+*/
+  glutSwapBuffers();
+}
+void rand_unit_vector(GLfloat v[])
+{
+  int i;
+
+  for(i=0;i<3;i++)
+    v[i] = drand48() - 0.5;
+}
+void explode()
+{
+  int i;
+  GLfloat v[3];
+
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 1.0);
+  glLineWidth(4.0);
+
+  glBegin(GL_LINES);
+    for(i=0;i<10;i++){
+      rand_unit_vector(v);
+      glVertex3f(ping.dir.x, ping.dir.y, ping.dir.z);
+      glVertex3f(ping.dir.x+v[0], ping.dir.y+v[1], ping.dir.z+v[2]);
+    }
+  glEnd();
+}
+void explode_bob(int i)
+{
+  int k;
+  GLfloat v[3];
+
+  bob[i].flag = 1;
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,red);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,red);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 1.0);
+  glLineWidth(10.0);
+
+  glBegin(GL_LINES);
+    for(k=0;k<10;k++){
+      rand_unit_vector(v);
+      glVertex3f(bob[i].x, bob[i].y+2, bob[i].z);
+      glVertex3f(bob[i].x+v[0]+10, bob[i].y+v[1]+10, bob[i].z+v[2]+10);
+    }
+  glEnd();
+}
+void move_bullet()
+{
+  int i,j,k;
+  VIEWER *p;
+
+  p = &(ping.dir);
+  p->x += p->vx/4.0;
+  p->y += p->vy/4.0;
+  p->z += p->vz/4.0;
+  for(i=0;i<NBOB;i++){
+    if(floor(ping.dir.x) == floor(bob[i].x) && floor(ping.dir.z) == floor(bob[i].z) && bob[i].flag == 0){
+      ping.flag = 2;
+      explode_bob(i);
+      score++;
+      bobL--;
+    }
+  }
+
+  if(get_cell_type(p->x,p->z) != CT_FLOOR){
+    ping.flag = 2;
+    ping.counter = 0;
+    return;
+  }
+}
+void animate_bullets()
+{
+  switch(ping.flag){
+    case 0: return;
+    case 1: move_bullet(); break;
+    case 2: if(++ping.counter == EXPTICKS) ping.flag = 0; break;
+  }
+}
+void bullets()
+{
+  if(ping.flag == 0)
+    return;
+  if(ping.flag == 2){
+    explode();
+    return;
+  }
+  red[0] = drand48();
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,red);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,red);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS, 1.0);
+  glLineWidth(6.0);
+
+  glBegin(GL_LINES);
+    glVertex3f(ping.dir.x, ping.dir.y, ping.dir.z);
+    glVertex3f(ping.dir.x+ping.dir.vx/4.0,
+               ping.dir.y+ping.dir.vy/4.0,
+               ping.dir.z+ping.dir.vz/4.0);
+  glEnd();
+}
+void monster(MONSTER *p)
+{
+  if(p->flag == 0){
+  glPushMatrix();
+
+  glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  monamb);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  mondif);
+  glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, monspe);
+  glMaterialf (GL_FRONT_AND_BACK, GL_SHININESS,10.0);
+
+  glLineWidth(1.0);
+
+  glTranslatef(p->x, 0.0, p->z);
+  glRotatef(-p->heading, 0.0, 1.0, 0.0);
+  glRotatef(-90.0, 1.0, 0.0, 0.0);
+
+/* torso and head*/
+
+  glPushMatrix();
+
+  glTranslatef(0.0, 0.0,  p->bodylen  + p->headrad + p->y);
+  gluSphere(body, p->headrad, 12, 12);
+
+  glTranslatef(0.0, 0.0, -(p->bodylen  + p->headrad));
+  glScalef(0.5, 1.0, 1.0);
+  gluCylinder(body, 0.2, 0.3, p->bodylen, 12, 12);
+  glPopMatrix();
+
+/* legs */
+
+  glPushMatrix();
+      glTranslatef(0.0, 0.1, 1.0);             /* 0 is the hip */
+      glRotatef(p->rightleg, 0.0, 1.0, 0.0);
+/* upper leg */
+      glTranslatef(0.0, 0.0,-0.5);
+      gluCylinder(body, 0.04, 0.05, 0.5, 12, 12);
+/* lower leg */
+      glRotatef(p->rightankle, 0.0, 1.0, 0.0);
+      glTranslatef(0.0, 0.0,-0.5);               /* 0 is the knee */
+      gluCylinder(body, 0.03, 0.04, 0.5, 12, 12);
+  glPopMatrix();
+
+  glPushMatrix();
+      glTranslatef(0.0,-0.1, 1.0);
+      glRotatef(p->leftleg, 0.0, 1.0, 0.0);
+      glTranslatef(0.0, 0.0,-0.5);
+      gluCylinder(body, 0.05, 0.05, 0.5, 12, 12);
+      glRotatef(p->leftankle, 0.0, 1.0, 0.0);
+      glTranslatef(0.0, 0.0,-0.5);               /* 0 is the knee */
+      gluCylinder(body, 0.03, 0.04, 0.5, 12, 12);
+  glPopMatrix();
+
+  glPopMatrix();
+  }
+}
+void read_moi_map(uchar nmap[MSIZ][MSIZ]){
+  int i,j,k;
+  for(i=0;i<MSIZ;i++)
+    for(j=0;j<MSIZ;j++){
+     map[i][j] = 1;
+    }
+  //x while loop
+  i = moi.x;
+  j = moi.z;
+  printf("%1f %1f",i,j);
+  while(i != -1){
+    if(map[i][j] == CT_FLOOR){
+      nmap[i][j] = 0;
+      nmap[i][j+1] = map[i][j+1];
+      nmap[i][j-1] = map[i][j-1];
+      i++;
+    }else{
+      nmap[i][j] = 9;
+      break;
+    }
+  }
+  //z while loop
+  i = moi.x;
+  while(j != -1){
+    if(map[i][j] == CT_FLOOR){
+      nmap[i][j] = 0;
+      nmap[i+1][j] = map[i+1][j];
+      nmap[i-1][j] = map[i-1][j];
+      j++;
+    }else{
+      nmap[i][j] = 9;
+      break;
+    }
+  }
+}
+
+void building()
+{
+  int i,j;
+  GLfloat fx,fz;
+
+//  printf("%1f %1f\n",moi.x,moi.z);
+  //WALL CREATION
+  glBindTexture(GL_TEXTURE_2D, walltex);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  for(i=0;i<MSIZ;i++){
+    fx = CELLSIZE * i;
+    for(j=0;j<MSIZ;j++){
+      if(map[i][j] == CT_WALL){
+        fz = CELLSIZE * j;
+        glBegin(GL_QUADS);
+          glNormal3f( 0.0, 0.0,-1.0);
+          glTexCoord2f(0.0, 0.0);
+          glVertex3f(fx, 0.0, fz);
+          glTexCoord2f(0.0, 1.0);
+          glVertex3f(fx, WALLHGT, fz);
+          glTexCoord2f(1.0, 1.0);
+          glVertex3f(fx+CELLSIZE, WALLHGT, fz);
+          glTexCoord2f(1.0, 0.0);
+          glVertex3f(fx+CELLSIZE, 0.0, fz);
+        glEnd();
+        glBegin(GL_QUADS);
+          glNormal3f( 1.0, 0.0, 0.0);
+          glTexCoord2f(0.0, 0.0);
+          glVertex3f(fx+CELLSIZE, 0.0, fz);
+          glTexCoord2f(0.0, 1.0);
+          glVertex3f(fx+CELLSIZE, WALLHGT, fz);
+          glTexCoord2f(1.0, 1.0);
+          glVertex3f(fx+CELLSIZE, WALLHGT, fz+CELLSIZE);
+          glTexCoord2f(1.0, 0.0);
+          glVertex3f(fx+CELLSIZE, 0.0, fz+CELLSIZE);
+        glEnd();
+        glBegin(GL_QUADS);
+          glNormal3f( 0.0, 0.0, 1.0);
+          glTexCoord2f(0.0, 0.0);
+          glVertex3f(fx+CELLSIZE, 0.0, fz+CELLSIZE);
+          glTexCoord2f(0.0, 1.0);
+          glVertex3f(fx+CELLSIZE, WALLHGT, fz+CELLSIZE);
+          glTexCoord2f(1.0, 1.0);
+          glVertex3f(fx, WALLHGT, fz+CELLSIZE);
+          glTexCoord2f(1.0, 0.0);
+          glVertex3f(fx, 0.0, fz+CELLSIZE);
+        glEnd();
+        glBegin(GL_QUADS);
+          glNormal3f(-1.0, 0.0, 0.0);
+          glTexCoord2f(0.0, 0.0);
+          glVertex3f(fx, 0.0, fz+CELLSIZE);
+          glTexCoord2f(0.0, 1.0);
+          glVertex3f(fx, WALLHGT, fz+CELLSIZE);
+          glTexCoord2f(1.0, 1.0);
+          glVertex3f(fx, WALLHGT, fz);
+          glTexCoord2f(1.0, 0.0);
+          glVertex3f(fx, 0.0, fz);
+        glEnd();
+      }
+    }
+  }
+
+  //HALL CREATION
+  glBindTexture(GL_TEXTURE_2D, ceilingtex);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,white);
+  glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+  for(i=0;i<MSIZ;i++){
+    fx = CELLSIZE * i;
+    for(j=0;j<MSIZ;j++){
+      if(map[i][j] == CT_FLOOR){
+        fz = CELLSIZE * j;
+        glBegin(GL_QUADS);
+          glNormal3f( 0.0,-1.0, 0.0);
+          glTexCoord2f(0.0, 0.0); glVertex3f(fx, WALLHGT, fz);
+          glTexCoord2f(1.0, 0.0); glVertex3f(fx+CELLSIZE, WALLHGT, fz);
+          glTexCoord2f(1.0, 1.0); glVertex3f(fx+CELLSIZE, WALLHGT, fz+CELLSIZE);
+          glTexCoord2f(0.0, 1.0); glVertex3f(fx, WALLHGT, fz+CELLSIZE);
+        glEnd();
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+Network Protocols - layered protocols:
+  -- TCP/IP
+    -- Application layers eg HTTP, SMTP
+    -- TCP/UDP (Transmission Control Protocol/User Datagram Protocol) (progs.)
+      -- Programmer thinks about.
+      -- Most focused on in this class (?)
+    -- IP (Internet Protocol) layer (different network)
+    -- Data link layer/hardware layer (same network)
+      -- ex: ethernet, wifi
+
+Client program:
+  -- create a socket (network file descriptor)
+  -- connect the socket to the server
+  -- loop:
+    -- check the network, if there is data, read it then print it to terminal
+    -- check the terminal for user input, if there is data, read it then send
+       it to the server
+    -- sleep for a while
+
+Ask if there is data to read on either
+  a) stdin
+  b) network (socket)
+
+Method 1: ioctl (easy)
+  -- ioctl(int descriptor, request, address of answer)
+  -- for stdin:
+    -- err = ioctl(0,FIONREAD, &n);
+
+Method 2: select system call
+  -- select(max descriptor number+1, bitstring for input, bitstring for output,
+            bitstring for errors, time to wait for answer)
+
+int x = 1048579;
+
+Big Endian = high-order bytes come first
+  -- Network byte order
+Little Endian = low-order bytes come first
+  -- Intel/AMD

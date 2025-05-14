@@ -1,0 +1,49 @@
+Dijkstra's
+
+Priority Queue:
+  -remove item with highest priority
+  - insert item
+
+heap : a binary tree satisfying each node has priority >= priority of 
+       each child
+  -upheap - compare priority with parent, exchange if nesscessary, 
+            repeat
+  -downheap - compare priority with children, if child has greater 
+              priority, exchange with greater child repeat if necessary
+ 
+
+
+          3
+         / \
+        /   \
+       7     8
+      / \   / \
+     6   5 6   9
+
+          9
+         / \ 
+        /   \
+       7     8
+      / \   / \
+     6   5 6   3
+
+
+
+dijkstra's
+
+initialize priority queue
+for all vertices v;
+  dist[v] = infit
+dist[s] = 0
+insert(s)
+while PQ not empty:
+  u = remove();
+  for each neighbor v of u;
+    tmp = dist[u] + edge(u,v)
+    if tmp < deist[v] then
+       dist[v] = tmp
+       insert(v);
+
+
+
+Pwhat if exoo is watching?

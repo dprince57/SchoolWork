@@ -1,0 +1,17 @@
+[Desktop Entry]
+FullScreen=false
+
+[KFileDialog Settings]
+Height 1024=497
+Recent Files[$e]=$HOME/Downloads/cs475.pdf,$HOME/Downloads/cs475.pdf
+Width 1280=672
+
+[MainWindow]
+Height 1024=1025
+State=AAAA/wAAAAD9AAAAAAAABQAAAAOSAAAABAAAAAQAAAAIAAAACPwAAAABAAAAAgAAAAEAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAA
+ToolBarsMovable=Disabled
+Width 1280=1281
+
+[Recent Files]
+File1[$e]=$HOME/Downloads/cs475.pdf
+Name1[$e]=cs475.pdf

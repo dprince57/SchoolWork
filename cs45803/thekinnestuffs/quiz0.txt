@@ -1,0 +1,68 @@
+"Calibration Quiz" - Quiz 0, CS 458/558
+
+Name: 
+
+
+Rank these data structures from fastest to slowest in terms of 
+/average/ lookup time (assuming the data structure is being used properly).
+ - balanced binary search tree, unsorted array, sorted array, hash table
+
+
+
+
+Rank those from fastest to slowest in terms of /worst-case/ lookup time.
+
+
+
+
+Rank those from fastest to slowest in terms of /average/ time to insert a 
+new record.
+
+
+
+What are the two main steps to an induction proof?
+
+
+
+Prove, using induction, that 1+x <= e^x, for all positive integers x.
+
+
+
+
+
+
+
+
+
+Rank the following in increasing order, in terms of big-O
+  - n, log(n), 2^n, n^2, 1.5^n, n^n, (log(n))^10
+
+
+
+
+
+
+
+Pick one of the pair from the last one, and prove which one is bigger for large n.
+
+
+
+
+
+
+Which problem have you seen an algorithm for - shortest path or longest path?
+
+
+
+
+In a graph on n vertices, what is the largest number of edges possible?
+
+
+
+
+Name two sorting algorithms, give a basic description of how they work, and 
+say which one is better.
+
+
+
+

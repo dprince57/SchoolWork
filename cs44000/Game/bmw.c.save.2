@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <GL/glut.h>
+
+#define WALKFILE   "walk1.txt"
+#define MAPFILE    "map.txt"
+
+#define DEGRAD        57.295779513
+#define K           1024
+
+#define CT_FLOOR       0
+#define CT_EAST        1
+#define CT_NORTH       2
+#define CT_WEST        3
+#define CT_SOUTH       4
+#define CT_WALL        9
+
+#define TOOS(X)     ((X) < NEAR)
+#define TOOB(X)     ((X) > (CELLSIZE-NEAR))
+
+#define NEAR          1.0
+#define CELLSIZE      5.0
+#define MSIZ          99
+#define WSIZ          MSIZ * CELLSIZE
+#define FUDGE         0.2
+
+#define WALLHGT       4.0
+#define MAXFUDGE      25
+#define NBOB          101
+#define MBUL          25
+
+#define EXPTICKS      15
+
+#define MAXTICKS      60
+#define NSLIDES        8
+#define FPS           10
+
+typedef
+  unsigned char
+uchar;
+
+typedef struct viewer {
+  GLfloat x,y,z;
+  GLfloat theta, phi;
+  GLfloat vx,vy,vz;
+} VIEWER;
+
+typedef struct bullet {
+  int flag;
+  int counter;
+  VIEWER dir;
+} BULLET;
+
+typedef struct monstertype {
+  GLfloat lowerleglen, upperleglen, bodylen, headrad;
+  GLfloat x,y,z;
+  GLfloat heading;
+  GLfloat leftleg,rightleg;
+  GLfloat leftankle,rightankle;
+  int nslides, fps, flag;
+} MONSTER;
+
+typedef struct walkdata {
+  GLfloat leftleg[NSLIDES];
+  GLfloat rightleg[NSLIDES];
+  GLfloat leftankle[NSLIDES];
+  GLfloat rightankle[NSLIDES];
+  GLfloat height[NSLIDES];
+  GLfloat ds[NSLIDES];
+  int fps;
+} WALK;
+
+uchar map[MSIZ][MSIZ];
+uchar nmap[MSIZ][MSIZ];
+
+int automode;
+
+GLuint walltex, ceilingtex;
+
+GLfloat pos0[] = {  1.0,  3.0,  4.0,  1.0};
+GLfloat pos1[] = { -1.0,  3.0,  4.0,  1.0};
+GLfloat amb[] =  {  0.5,  0.5,  0.5,  1.0};
+GLfloat dif[] =  {  0.5,  0.5,  0.5,  1.0};
+GLfloat spe[] =  {  0.9,  0.9,  0.9,  1.0};
+
+GLfloat matamb[] = {0.30,  0.30,  0.30,  1.0};
+GLfloat matdif[] = {0.50,  0.50,  0.50,  1.0};
+GLfloat matspe[] = {0.10,  0.10,  0.10,  1.0};
+
+GLfloat monamb[] = {0.60,  0.10,  0.10,  1.0};
+GLfloat mondif[] = {0.10,  0.10,  0.10,  1.0};
+GLfloat monspe[] = {0.10,  0.10,  0.80,  1.0};
+
+GLfloat white[] = {1.0, 1.0, 1.0, 1.0};
+GLfloat red[] = {1.0, 0.4, 0.4, 1.0};
+
+GLUquadric *body;
+MONSTER bob[NBOB];
+WALK walk1;
+BULLET ping;
+
+double pov;
+VIEWER moi;
+
+//NEW STUFF
+void text(int x,int y, int z, char StR[], int repT);
+
+void mymenu(int value);
+void processMenuStatus(int status, int x, int y);
+void explode_bob(int i);
+//Height, width, score, fps, and menuflag intergers
+int w,h;
+int mainMenu;
+float fps;
+float score;
+int bobL = NBOB;
+int menuFlag = 0;
+//Variables for Frames per second counter.
+int frame;
+float time, timebase;
+
+void setOrthographicProjection();
+void restorePerspectiveProjection();
+
+void read_moi_map(uchar nmap[MSIZ][MSIZ]);
+//
+
+void display();
+void animate();
+void animate_bullets();
+void reshape(int w, int h);
+void arrows(int c, int x, int y);
+void keyboard(unsigned char c, int x, int y);
+
+void init();

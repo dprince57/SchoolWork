@@ -1,0 +1,46 @@
+Shortest Path Algorithms
+  -Dijhstra's Algoritm for simple graphs
+
+   %_#_$_^__neighbors___________&________     % = vertex  
+  |0 x x 0  1 2 3               -	      # = visited
+  |1 x x 1  0 4			0	      $ = scanned
+  |2 x x 1  0 5			0	      ^ = distance
+  |3 x x 1  0 6                 0             & = parent
+  |4 x x 2  1 5                 1
+  |5 x x 2  2 4 7 8             2
+  |6 x x 2  3 8                 3
+  |7 x x 3  5 9                 5
+  |8 x x 3  5 6 9               5
+  |9 x x 4  7 8                 7
+  |______________________________________  
+
+v = 1
+
+  1----4
+ /     |
+0--2---5---7 
+ \      \   \
+  3--6--8----9
+ 
+        ####################
+queue = #0,1,2,3,4,5,6,7,8
+        ####################
+
+v = 0 (start vertex)
+set v's distance to 0
+mark v as  visited
+put v in the queue
+while(v = remove from queue
+  mark v scanned
+  for each neighbor u of v:
+    if u has been visited 
+      possibly update distance 
+    else
+      mark u vistied
+      put in the queue
+      possibly update distance/parent
+
+
+  -Dijhstra's Algoritm for simple graphs
+
+

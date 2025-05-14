@@ -1,0 +1,13 @@
+Server Outline:
+---------------
+ * create a socket ( socket(2) ) 
+ * bind the socket to a port ( bind(2) ) <--- most likely to fail
+ * listen for new connections ( listen(2) )
+ * loop :
+   - look for a new connection
+   - sleep
+
+
+tcp       -  port number       16 bits
+ip        -  ip address        32 bits
+ethernet  -  ethernet address  48 bits

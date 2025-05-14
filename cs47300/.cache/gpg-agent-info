@@ -1,0 +1,3 @@
+GPG_AGENT_INFO=/tmp/gpg-RcBcVY/S.gpg-agent:27101:1
+SSH_AUTH_SOCK=/tmp/gpg-pNf635/S.gpg-agent.ssh
+SSH_AGENT_PID=27101

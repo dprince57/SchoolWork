@@ -1,0 +1,35 @@
+In this lab we make some updates to the pbm program that we worked on in class.
+
+The files in this directory were copied from ~cs500/public_html/pbm/
+
+You should do all of the tasks that are labeled lab5 in comments in the code.
+A correct working version of my compiled code is in the SOLUTION directory
+of this assignment. You should run my program to see how it is supposed to work.
+
+You should match the formatting and output of my program exactly.
+
+You can also use the hwcheck option to check your program's output against
+mine on test inputs. You do this...
+
+make
+submit --hwcheck
+
+
+Points/grading... You should work on the program in the following order,
+and each part is worth the given # of points.
+1) --help usage statement: 1 pt
+2) read from argv[1] rather than always CHES-1-like: 1 pt
+3) --print: 1 pt
+4) --row_count: 1 pt
+5) --max_escore, --min_escore: 2 pts
+6) --avg_escore: 2 pts
+7) --large_escore: 2 pts
+7) --small_escore: 2 pts
+8) free: 2 pts
+
+
+Note that your program should also have a correct pbm_free function, so
+there are not any memory leaks. You can run the following to check your
+program.
+
+valgrind --leak-check=full ./pbm_driver.o /u1/junk/kinne/ahmad-lab/data_files/CHES-1-like_8mers_11111111.txt --max_escore

@@ -1,0 +1,20 @@
+Anything in ()'s is optional, for "ambitious" people.
+
+client
+------
+  send a message to server:
+    a) login (real name)
+    b) time
+    c) IP (geographic coordinates lat/long)
+
+server [RUN ON PORT 2300] [udp server]
+------
+  reads messages
+  updates an sqlite3 database
+    for each user/ip
+      # of logins
+      (geo coordinates)
+
+admin
+-----
+  reads the database

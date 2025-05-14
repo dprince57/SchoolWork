@@ -1,0 +1,6 @@
+while :
+do
+ date
+ server 2300
+ sleep 300
+done

@@ -1,0 +1,7 @@
+[Global]
+ShowFrame=false
+Rows=1
+
+[Applications]
+blueman-applet=false
+

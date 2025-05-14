@@ -1,0 +1,14 @@
+cd /u1/class/cs401
+cp -r Oct31 ~
+
+1. Define a command that does one of the following:
+   - lists the contents of file /etc/passwd
+   - lists all the subdirectories in the directory /u1/class
+2. Define a regex pattern using r string that finds all student accounts. Make sure your regex pattern returns no error
+   during compilation by using exception handling.         
+3. use a subprocess to call your command
+4. Make sure to consider handling exceptions with subprocess.
+5. Take the output of your command and use it with regular expression in order to find all student accounts. You will need    
+   to split your subprocess standard output in order to use it with regex search function. Be careful in case you use
+   findall function as it might give duplicates if you use /etc/passwd.
+

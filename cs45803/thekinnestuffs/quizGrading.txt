@@ -1,0 +1,9 @@
+For daily quizzes during student presentations...
+
+Each quiz is 4 points total.
+
+A question marked with an X is wrong.  A question marked
+with a / gets 1/2 credit.  A question that is unmarked
+gets full credit.  
+
+There are 2 questions on each quiz, with each worth 2 points.

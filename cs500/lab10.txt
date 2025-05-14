@@ -1,0 +1,23 @@
+Put the following functions in order from smallest to largest in terms of big-O. If you think there are some that are the same in terms of big-O you can list those in whatever order you like. Make sure to indicate your answers with the numbers given. My advice is to copy/paste the entire list into Word or Docs and rearrange them as you look through them. Then you can copy/paste your list back into the answer field when you are done.
+1) 10n(log(n))7
+2) 12225 n
+3) 18n4 n
+4) 17n0.7
+5) 7log(n) + 101.05
+6) 14(log(n))5.0
+7) 10(log(log(n)))3.5
+8) 14n10 * log(n)
+9) 15/(n2.5)
+10) 7(n choose 12)
+11) 1n * (log(n))10
+12) 5/((log(n))3.5)
+13) 14(log(n))3.5
+14) 13n11
+15) 15n + (log(n))45
+16) 10n!
+17) 162n0.5
+18) 1925 n
+19) 72200
+20) 6n(log(log(n)))6
+21) 8n * log(n) + (log(n))5
+22) 82n (log(n))2

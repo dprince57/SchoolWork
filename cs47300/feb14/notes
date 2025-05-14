@@ -1,0 +1,15 @@
+TCP connection:
+---------------
+1. set up connection
+2. conversation
+3. take down the connection
+
+
+SYN = Syncronize
+ACK = acknowledge
+
+Client                      Server
+======                      ======
+SYN packet (random int x)   
+                            SYN-ACK acks. w/ x+1, rand int y (seq. num.)
+ACK acks. y+1
