@@ -1,6 +1,0 @@
-[$Version]
-update_info=kwin_blacklist.upd:Blacklist-4.5,kwin_focus1.upd:kwin_focus1,kwin_focus2.upd:kwin_focus2,kwin.upd:kde3.0r1,kwin.upd:kde3.2Xinerama,kwin_on_off.upd:kwin_on_off,kwin3_plugin.upd:kde3.2
-
-[TabBox]
-ListMode=0
-ShowTabBox=true
